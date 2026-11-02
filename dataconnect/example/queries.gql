@@ -1,0 +1,157 @@
+mutation CreateUser @auth(level: USER) {
+  user_insert(data: {
+    id_expr: "auth.uid",
+    username: "newuser",
+    email: "user@example.com",
+    xpScore: 0
+  })
+}
+
+mutation UpdateUser @auth(level: USER) {
+  user_update(key: {id_expr: "auth.uid"}, data: {xpScore_update: [{inc: 10}]})
+}
+
+mutation DeleteUser @auth(level: USER) {
+  user_delete(key: {id_expr: "auth.uid"})
+}
+
+query GetCurrentUser @auth(level: USER) {
+  user(key: {id_expr: "auth.uid"}) {
+    username
+    email
+    xpScore
+  }
+}
+
+query ListUsers @auth(level: PUBLIC, insecureReason: "Public leaderboard visibility") {
+  users(limit: 50, orderBy: [{xpScore: DESC}]) {
+    username
+    xpScore
+  }
+}
+
+mutation CreateMission @auth(level: PUBLIC, insecureReason: "Missions are global content") {
+  mission_insert(data: {
+    title: "Intro",
+    description: "Learn",
+    difficultyLevel: 1,
+    expectedOutput: "Done"
+  })
+}
+
+mutation UpdateMission @auth(level: PUBLIC, insecureReason: "Admin-like role needed but using public for demo") {
+  mission_update(id: "00000000-0000-0000-0000-000000000000", data: {difficultyLevel: 2})
+}
+
+mutation DeleteMission @auth(level: PUBLIC, insecureReason: "Admin-like role needed but using public for demo") {
+  mission_delete(id: "00000000-0000-0000-0000-000000000000")
+}
+
+query GetMission($id: UUID!) @auth(level: PUBLIC) {
+  mission(id: $id) {
+    title
+    description
+  }
+}
+
+query ListMissions @auth(level: PUBLIC) {
+  missions(limit: 20) {
+    title
+    category
+  }
+}
+
+mutation CreateAttempt($missionId: UUID!, $prompt: String!) @auth(level: USER) {
+  attempt_insert(data: {
+    userId_expr: "auth.uid",
+    missionId: $missionId,
+    inputPrompt: $prompt,
+    modelResponse: "OK",
+    isSuccess: true,
+    timestamp_time: {now: true}
+  })
+}
+
+mutation UpdateAttempt($id: UUID!, $status: Boolean!) @auth(level: USER) {
+  attempt_update(id: $id, data: {isSuccess: $status})
+}
+
+mutation DeleteAttempt($id: UUID!) @auth(level: USER) {
+  attempt_delete(id: $id)
+}
+
+query GetAttempt($id: UUID!) @auth(level: USER) {
+  attempt(id: $id) {
+    inputPrompt
+    modelResponse
+  }
+}
+
+query ListMyAttempts @auth(level: USER) {
+  attempts(where: {userId: {eq_expr: "auth.uid"}}) {
+    timestamp
+    isSuccess
+  }
+}
+
+mutation CreateSkill @auth(level: PUBLIC, insecureReason: "Global skills registry") {
+  skill_insert(data: {name: "GQL", description: "Querying"})
+}
+
+mutation UpdateSkill($id: UUID!) @auth(level: PUBLIC, insecureReason: "Admin-like") {
+  skill_update(id: $id, data: {description: "Updated"})
+}
+
+mutation DeleteSkill($id: UUID!) @auth(level: PUBLIC, insecureReason: "Admin-like") {
+  skill_delete(id: $id)
+}
+
+query GetSkill($id: UUID!) @auth(level: PUBLIC) {
+  skill(id: $id) {
+    name
+    description
+  }
+}
+
+query ListSkills @auth(level: PUBLIC) {
+  skills {
+    name
+  }
+}
+
+mutation CreateBadge($userId: UUID!, $name: String!) @auth(level: USER, expr: "auth.token.admin == true") {
+  badge_insert(data: {userId: $userId, name: $name, criteria: "Win"})
+}
+
+mutation DeleteBadge($id: UUID!) @auth(level: USER, expr: "auth.token.admin == true") {
+  badge_delete(id: $id)
+}
+
+query GetBadge($id: UUID!) @auth(level: USER) {
+  badge(id: $id) {
+    name
+    criteria
+  }
+}
+
+query ListBadges @auth(level: USER) {
+  badges(where: {userId: {eq_expr: "auth.uid"}}) {
+    name
+  }
+}
+
+mutation CreateLeaderboardEntry($userId: UUID!, $score: Int!) @auth(level: PUBLIC, insecureReason: "Global leaderboard") {
+  leaderboard_insert(data: {userId: $userId, score: $score, rank: 1})
+}
+
+mutation UpdateLeaderboard($id: UUID!, $score: Int!) @auth(level: PUBLIC, insecureReason: "Global leaderboard") {
+  leaderboard_update(id: $id, data: {score: $score})
+}
+
+query ListLeaderboard @auth(level: PUBLIC) {
+  leaderboards(orderBy: [{score: DESC}]) {
+    rank
+    score
+    user { username }
+  }
+}

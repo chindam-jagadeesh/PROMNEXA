@@ -1,0 +1,43 @@
+type User @table {
+  username: String!
+  email: String!
+  xpScore: Int!
+  avatarUrl: String
+  bio: String
+}
+
+type Mission @table {
+  title: String!
+  description: String!
+  difficultyLevel: Int!
+  expectedOutput: String!
+  hints: String
+  category: String
+}
+
+type Attempt @table {
+  inputPrompt: String!
+  modelResponse: String!
+  isSuccess: Boolean!
+  timestamp: Timestamp!
+  user: User!
+  mission: Mission!
+}
+
+type Skill @table {
+  name: String!
+  description: String!
+  prerequisiteSkill: Skill
+}
+
+type Badge @table {
+  name: String!
+  criteria: String!
+  user: User!
+}
+
+type Leaderboard @table {
+  rank: Int!
+  score: Int!
+  user: User!
+}

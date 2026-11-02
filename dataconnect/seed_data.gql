@@ -1,0 +1,30 @@
+mutation SeedDatabase @transaction {
+  user_insertMany(data: [
+    { username: "alice_dev", email: "alice@example.com", xpScore: 150 },
+    { username: "bob_coder", email: "bob@example.com", xpScore: 200 },
+    { username: "charlie_ui", email: "charlie@example.com", xpScore: 120 }
+  ])
+  skill_insertMany(data: [
+    { name: "GraphQL Basics", description: "Query language for APIs" },
+    { name: "Firebase FDC", description: "Data Connect specialized knowledge" },
+    { name: "Advanced SQL", description: "Complex database queries" }
+  ])
+  mission_insertMany(data: [
+    { title: "Query 101", description: "Basic query", difficultyLevel: 1, expectedOutput: "success", category: "Basics" },
+    { title: "Mutation Master", description: "Write operations", difficultyLevel: 2, expectedOutput: "inserted", category: "Advanced" },
+    { title: "Vector Search", description: "Embeddings test", difficultyLevel: 3, expectedOutput: "found", category: "AI" }
+  ])
+  attempt_insertMany(data: [
+    { inputPrompt: "Get users", modelResponse: "data: {users: []}", isSuccess: true, timestamp: "2023-10-01T10:00:00Z", user: {id: "00000000-0000-0000-0000-000000000001"}, mission: {id: "00000000-0000-0000-0000-000000000001"} },
+    { inputPrompt: "Insert post", modelResponse: "status: ok", isSuccess: true, timestamp: "2023-10-01T11:00:00Z", user: {id: "00000000-0000-0000-0000-000000000002"}, mission: {id: "00000000-0000-0000-0000-000000000002"} }
+  ])
+  badge_insertMany(data: [
+    { name: "Early Adopter", criteria: "Joined in beta", user: {id: "00000000-0000-0000-0000-000000000001"} },
+    { name: "Code Ninja", criteria: "First mutation", user: {id: "00000000-0000-0000-0000-000000000002"} }
+  ])
+  leaderboard_insertMany(data: [
+    { rank: 1, score: 200, user: {id: "00000000-0000-0000-0000-000000000002"} },
+    { rank: 2, score: 150, user: {id: "00000000-0000-0000-0000-000000000001"} },
+    { rank: 3, score: 120, user: {id: "00000000-0000-0000-0000-000000000003"} }
+  ])
+}

@@ -1,0 +1,20 @@
+PROMNEXA AI PATCH — READ FIRST
+
+This patch adds the first real Hugging Face integration for image generation and prompt-quality evaluation.
+
+1. Back up your current PROMNEXA folder.
+2. Extract this patch ZIP into your EXISTING inner PROMNEXA project folder (the folder containing package.json). Allow files to be overwritten.
+3. Do not replace or delete your .env file.
+4. Confirm Supabase Edge Function Secrets contains HF_TOKEN (the Hugging Face token value). Never put that token in .env.
+5. Open a terminal in the project folder and run:
+
+   npx supabase login
+   npx supabase link --project-ref YOUR_PROJECT_REF
+   npx supabase functions deploy generate-image
+   npx supabase functions deploy evaluate-prompt
+
+   Replace YOUR_PROJECT_REF with the part before .supabase.co in your Supabase Project URL. If already linked, skip the link command.
+
+6. Restart Vite (Ctrl+C, then npm run dev), refresh the website, and test Evaluate prompt and Generate image.
+
+Important: Hugging Face free quota/model availability is not guaranteed. The first version scores prompt clarity but does not yet perform true image-to-image comparison or save generated images to Supabase Storage.

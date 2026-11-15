@@ -5,7 +5,7 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   signOut as firebaseSignOut,
-  signInWithRedirect,
+  signInWithPopup,
   GoogleAuthProvider,
 } from "firebase/auth";
 import { firebaseConfigured, getFirebaseAuth } from "./firebase";
@@ -58,7 +58,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signInWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
-    await signInWithRedirect(getFirebaseAuth(), provider);
+    provider.setCustomParameters({ prompt: "select_account" });
+    await signInWithPopup(getFirebaseAuth(), provider);
   };
 
   const signOut = async () => {

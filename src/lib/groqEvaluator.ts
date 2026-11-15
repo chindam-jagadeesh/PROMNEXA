@@ -1,9 +1,6 @@
 import Groq from 'groq-sdk';
 
-const groq = new Groq({ 
-  apiKey: import.meta.env.VITE_GROQ_API_KEY, 
-  dangerouslyAllowBrowser: true 
-});
+const groqApiKey = import.meta.env.VITE_GROQ_API_KEY;
 
 export interface EvaluationResult {
   score: number;
@@ -16,7 +13,15 @@ export async function evaluatePromptWithGroq(
   gameDescription: string, 
   userPrompt: string
 ): Promise<EvaluationResult> {
+  if (!groqApiKey) {
+    throw new Error('AI prompt evaluation is not configured. Add VITE_GROQ_API_KEY to the deployment environment.');
+  }
+
   try {
+    const groq = new Groq({
+      apiKey: groqApiKey,
+      dangerouslyAllowBrowser: true
+    });
     const completion = await groq.chat.completions.create({
       model: 'openai/gpt-oss-120b', // Active Groq model
       messages: [

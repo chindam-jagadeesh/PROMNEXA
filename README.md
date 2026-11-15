@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # PROMNEXA — Stage 1 starter
 
 A dark, cinematic red 3D React website for a gamified prompt-engineering learning platform.
@@ -109,6 +108,3 @@ For actual AI evaluation, implement `supabase/functions/evaluate-prompt/index.ts
 - Add skill tree, achievements, leaderboard population, and lesson completion
 - Implement multiplayer Prompt Battle if desired
 - Add automated tests and production security review
-=======
-# PROMNEXA
->>>>>>> 0da4066cf18d8ff22a2cd21c964c4eeb8ab7ecf9

@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { Atom, ArrowLeft, ArrowRight, Eye, EyeOff, Mail, LockKeyhole, UserRound, ShieldCheck } from 'lucide-react'
 import { useAuth } from '../lib/AuthContext'
 import { firebaseConfigured, getFirebaseAuth } from '../lib/firebase'
-import { updateProfile, sendPasswordResetEmail } from 'firebase/auth'
+import { getRedirectResult, updateProfile, sendPasswordResetEmail } from 'firebase/auth'
 import OrbScene from '../components/OrbScene'
 
 export default function AuthPage() {
@@ -28,6 +28,14 @@ export default function AuthPage() {
       navigate(destination, { replace: true })
     }
   }, [user, navigate, destination])
+
+  useEffect(() => {
+    if (!firebaseConfigured) return
+
+    getRedirectResult(getFirebaseAuth()).catch((e: unknown) => {
+      setError(e instanceof Error ? e.message : 'Google sign-in failed.')
+    })
+  }, [])
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -81,8 +89,6 @@ export default function AuthPage() {
 
     try {
       await signInWithGoogle()
-      // Note: We don't need navigate() here anymore because signInWithRedirect 
-      // takes the user off the page. The useEffect above will handle the return trip!
     } catch (e: any) {
       if (e?.code !== 'auth/popup-closed-by-user') {
         setError(e instanceof Error ? e.message : 'Google sign-in failed.')

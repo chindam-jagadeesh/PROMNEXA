@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { Atom, ArrowLeft, ArrowRight, Eye, EyeOff, Mail, LockKeyhole, UserRound, ShieldCheck } from 'lucide-react'
 import { useAuth } from '../lib/AuthContext'
-import { auth, firebaseConfigured } from '../lib/firebase'
+import { firebaseConfigured, getFirebaseAuth } from '../lib/firebase'
 import { updateProfile, sendPasswordResetEmail } from 'firebase/auth'
 import OrbScene from '../components/OrbScene'
 
@@ -41,6 +41,7 @@ export default function AuthPage() {
 
     setBusy(true)
     try {
+      const auth = getFirebaseAuth()
       if (mode === 'register') {
         await signUpWithEmail(email, password)
         if (auth.currentUser && name) {

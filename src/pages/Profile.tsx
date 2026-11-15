@@ -3,7 +3,7 @@ import { User, Trophy, Zap, Shield, Mail, Award, Edit3, Check, Flame, Star, Acti
 import { useAuth } from '../lib/AuthContext'
 import { getUserStats, UserStats } from '../lib/gameService'
 import { doc, getDoc, setDoc } from 'firebase/firestore'
-import { db } from '../lib/firebase'
+import { getFirestoreDb } from '../lib/firebase'
 
 // Compute tier dynamically based on actual XP earned (matches Leaderboard logic)
 function computeTier(xp: number): 'Grandmaster' | 'Master' | 'Diamond' | 'Platinum' | 'Gold' {
@@ -53,7 +53,7 @@ export default function Profile() {
         const userStats = await getUserStats(user.uid)
         setStats(userStats)
 
-        const userDocRef = doc(db, 'users', user.uid)
+        const userDocRef = doc(getFirestoreDb(), 'users', user.uid)
         const userSnap = await getDoc(userDocRef)
         if (userSnap.exists()) {
           const data = userSnap.data()
@@ -82,7 +82,7 @@ export default function Profile() {
     if (!user?.uid || !tempName.trim()) return
     setSaving(true)
     try {
-      const userDocRef = doc(db, 'users', user.uid)
+      const userDocRef = doc(getFirestoreDb(), 'users', user.uid)
       await setDoc(userDocRef, { 
         displayName: tempName.trim(),
         bio: tempBio.trim()

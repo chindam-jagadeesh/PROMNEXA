@@ -1,4 +1,4 @@
-import { db } from './firebase'
+import { getFirestoreDb } from './firebase'
 import {
   doc,
   getDoc,
@@ -18,6 +18,7 @@ export interface UserStats {
 
 // Fetch or initialize user stats in Firestore
 export async function getUserStats(uid: string): Promise<UserStats> {
+  const db = getFirestoreDb()
   const userRef = doc(db, 'users', uid)
   const snap = await getDoc(userRef)
 
@@ -47,6 +48,7 @@ export async function updateUserStats(
   uid: string,
   { xpGained, gameId }: { xpGained: number; gameId: string }
 ) {
+  const db = getFirestoreDb()
   const userRef = doc(db, 'users', uid)
   
   await setDoc(
@@ -72,6 +74,7 @@ export async function recordGameResult(
 ) {
   const earnedXp = Math.max(10, Math.round(score * 0.5))
 
+  const db = getFirestoreDb()
   const attemptsRef = collection(db, 'users', uid, 'attempts')
   await addDoc(attemptsRef, {
     gameId,

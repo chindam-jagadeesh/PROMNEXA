@@ -5,7 +5,7 @@ import {
   Search, Shield, ChevronRight, Award, Sparkles 
 } from 'lucide-react'
 import { collection, query, orderBy, limit, getDocs } from 'firebase/firestore'
-import { db } from '../lib/firebase'
+import { getFirestoreDb } from '../lib/firebase'
 import { useAuth } from '../lib/AuthContext'
 
 interface LeaderboardUser {
@@ -52,7 +52,7 @@ export default function Leaderboard() {
   useEffect(() => {
     async function fetchLeaderboard() {
       try {
-        const usersRef = collection(db, 'users')
+        const usersRef = collection(getFirestoreDb(), 'users')
         const q = query(usersRef, orderBy('xp', 'desc'), limit(30))
         const snapshot = await getDocs(q)
 

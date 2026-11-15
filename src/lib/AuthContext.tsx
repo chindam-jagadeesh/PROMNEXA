@@ -8,7 +8,7 @@ import {
   signInWithPopup,          // BROUGHT BACK: signInWithPopup
   GoogleAuthProvider,
 } from "firebase/auth";
-import { auth } from "./firebase";
+import { firebaseConfigured, getFirebaseAuth } from "./firebase";
 
 export interface AuthUser extends User {
   id?: string;
@@ -30,7 +30,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    if (!firebaseConfigured) {
+      setLoading(false);
+      return;
+    }
+
+    const unsubscribe = onAuthStateChanged(getFirebaseAuth(), (currentUser) => {
       if (currentUser) {
         (currentUser as AuthUser).id = currentUser.uid;
         setUser(currentUser as AuthUser);
@@ -44,21 +49,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const signInWithEmail = async (email: string, password: string) => {
-    await signInWithEmailAndPassword(auth, email, password);
+    await signInWithEmailAndPassword(getFirebaseAuth(), email, password);
   };
 
   const signUpWithEmail = async (email: string, password: string) => {
-    await createUserWithEmailAndPassword(auth, email, password);
+    await createUserWithEmailAndPassword(getFirebaseAuth(), email, password);
   };
 
   // REVERTED: Back to using the Popup window
   const signInWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
-    await signInWithPopup(auth, provider);
+    await signInWithPopup(getFirebaseAuth(), provider);
   };
 
   const signOut = async () => {
-    await firebaseSignOut(auth);
+    await firebaseSignOut(getFirebaseAuth());
   };
 
   return (

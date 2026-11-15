@@ -6,7 +6,7 @@ import {
   Target, GraduationCap, Zap, Play 
 } from 'lucide-react'
 import { doc, getDoc, updateDoc, arrayUnion, increment } from 'firebase/firestore'
-import { db, firebaseConfigured } from '../lib/firebase'
+import { firebaseConfigured, getFirestoreDb } from '../lib/firebase'
 import { useAuth } from '../lib/AuthContext'
 
 interface Question {
@@ -555,7 +555,7 @@ export default function Learn() {
     async function loadProgress() {
       if (!user?.uid) return
       try {
-        const snap = await getDoc(doc(db, 'users', user.uid))
+        const snap = await getDoc(doc(getFirestoreDb(), 'users', user.uid))
         if (snap.exists()) {
           // Safely fallback to empty array to prevent bugs
           setCompleted(snap.data()?.completedLessons || [])
@@ -608,7 +608,7 @@ export default function Learn() {
         
         if (user?.uid && firebaseConfigured) {
           try {
-            await updateDoc(doc(db, 'users', user.uid), {
+            await updateDoc(doc(getFirestoreDb(), 'users', user.uid), {
               completedLessons: arrayUnion(lesson.id),
               xp: increment(lesson.xp)
             })

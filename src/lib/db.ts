@@ -1,4 +1,4 @@
-import { db } from './firebase';
+import { getFirestoreDb } from './firebase';
 import {
   doc,
   getDoc,
@@ -21,6 +21,7 @@ export interface UserProfile {
 
 // Fetch or initialize user profile
 export async function getOrCreateUserProfile(user: { uid: string; displayName?: string | null; email?: string | null }): Promise<UserProfile> {
+  const db = getFirestoreDb();
   const userRef = doc(db, 'users', user.uid);
   const snap = await getDoc(userRef);
 
@@ -43,6 +44,7 @@ export async function getOrCreateUserProfile(user: { uid: string; displayName?: 
 
 // Award XP after completing a challenge/game
 export async function addExperience(uid: string, xpPoints: number) {
+  const db = getFirestoreDb();
   const userRef = doc(db, 'users', uid);
   await updateDoc(userRef, {
     xp: increment(xpPoints),
@@ -51,6 +53,7 @@ export async function addExperience(uid: string, xpPoints: number) {
 
 // Save a generated prompt history record
 export async function savePromptAttempt(uid: string, data: { gameId: string; prompt: string; score?: number; imageUrl?: string }) {
+  const db = getFirestoreDb();
   const attemptsRef = collection(db, 'users', uid, 'attempts');
   return await addDoc(attemptsRef, {
     ...data,

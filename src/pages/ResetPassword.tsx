@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { Atom, ArrowLeft, ArrowRight, Eye, EyeOff, LockKeyhole, ShieldCheck } from 'lucide-react'
-import { auth, firebaseConfigured } from '../lib/firebase'
+import { firebaseConfigured, getFirebaseAuth } from '../lib/firebase'
 import { confirmPasswordReset, updatePassword } from 'firebase/auth'
 import OrbScene from '../components/OrbScene'
 
@@ -23,6 +23,11 @@ export default function ResetPassword() {
     setError('')
     setNotice('')
 
+    if (!firebaseConfigured) {
+      setError('Firebase is not configured. Please verify your Firebase environment variables.')
+      return
+    }
+
     if (password !== confirmPassword) {
       setError('Passwords do not match.')
       return
@@ -35,6 +40,7 @@ export default function ResetPassword() {
 
     setBusy(true)
     try {
+      const auth = getFirebaseAuth()
       if (oobCode) {
         // Resetting password via the link emailed by Firebase
         await confirmPasswordReset(auth, oobCode, password)

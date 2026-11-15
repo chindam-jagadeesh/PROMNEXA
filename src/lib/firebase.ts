@@ -5,7 +5,7 @@ import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
-const env = (import.meta as any).env || {};
+const env = import.meta.env;
 
 const firebaseConfig = {
   apiKey: env.VITE_FIREBASE_API_KEY,
@@ -17,15 +17,28 @@ const firebaseConfig = {
   measurementId: env.VITE_FIREBASE_MEASUREMENT_ID,
 };
 
-export const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app);
-export const db = getFirestore(app);
-export const storage = getStorage(app);
-
-// Check if Firebase keys are present
 export const firebaseConfigured = Boolean(
   env.VITE_FIREBASE_API_KEY && env.VITE_FIREBASE_PROJECT_ID
 );
+
+export const app = firebaseConfigured ? initializeApp(firebaseConfig) : null;
+export const auth = app ? getAuth(app) : null;
+export const db = app ? getFirestore(app) : null;
+export const storage = app ? getStorage(app) : null;
+
+export function getFirebaseAuth() {
+  if (!auth) {
+    throw new Error('Firebase is not configured. Please verify your Firebase environment variables.');
+  }
+  return auth;
+}
+
+export function getFirestoreDb() {
+  if (!db) {
+    throw new Error('Firebase is not configured. Please verify your Firebase environment variables.');
+  }
+  return db;
+}
 
 // Backward compatibility alias for components still importing supabaseConfigured
 export const supabaseConfigured = firebaseConfigured;
@@ -67,7 +80,7 @@ export const supabase = {
     },
   },
   auth: {
-    getUser: () => Promise.resolve({ data: { user: auth.currentUser }, error: null }),
+    getUser: () => Promise.resolve({ data: { user: auth?.currentUser ?? null }, error: null }),
     getSession: () => Promise.resolve({ data: { session: null }, error: null }),
     onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } }),
     signInWithPassword: () => Promise.resolve({ data: null, error: null }),
